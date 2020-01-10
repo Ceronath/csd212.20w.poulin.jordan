@@ -12,15 +12,21 @@
             border-collapse: collapse;
             width: 200px;
             height: 300px;
+            border-radius: 25px;
+            box-shadow: 5px 5px 5px grey;
         }
         td{
             border: none;
+            height: 100%;
         }
         button{
             background-color: rgba(55,86,153,.5);
             width: 100%;
             border: none;
             height: 100%;
+            border-radius: 25px;
+            font-size: 30px;
+            box-shadow: 3px 3px 5px rgb(5, 1, 1);
         }
         .op{
             background-color: orange;
@@ -32,13 +38,21 @@
             background-color: green;
         }
         .display{
-            background-color: white;
+            background-color: rgba(255, 255, 255, 0.747);
             text-align: right;
-            height: 100%;
+           
             font-size: 2em;
         }
-       
-
+        tr{
+            height: 45px;
+        }
+        button:hover {
+            background-color: rgb(170, 155, 155);
+        }
+        button:active {
+            background-color: rgb(170, 155, 155);
+            transform: translateY(2px);
+        }
     </style>
 </head>
 <body>
