@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>CSD212 Calculator</title>
     <style>
-        table{
+        table {
             text-align: center;
             background-color: rgba(86, 97, 119, 0.781);
             border-collapse: collapse;
@@ -15,12 +16,14 @@
             border-radius: 25px;
             box-shadow: 5px 5px 5px grey;
         }
-        td{
+
+        td {
             border: none;
             height: 100%;
         }
-        button{
-            background-color: rgba(55,86,153,.5);
+
+        button {
+            background-color: rgba(55, 86, 153, .5);
             width: 100%;
             border: none;
             height: 100%;
@@ -28,37 +31,47 @@
             font-size: 30px;
             box-shadow: 3px 3px 5px rgb(5, 1, 1);
         }
-        .op{
+
+        .op {
             background-color: orange;
         }
-        .clear{
+
+        .clear {
             background-color: red;
         }
-        .eq{
+
+        .eq {
             background-color: green;
         }
-        .display{
+
+        .display {
             background-color: rgba(255, 255, 255, 0.747);
             text-align: right;
-           
+
             font-size: 2em;
         }
-        tr{
+
+        tr {
             height: 45px;
         }
+
         button:hover {
             background-color: rgb(170, 155, 155);
         }
+
         button:active {
             background-color: rgb(170, 155, 155);
             transform: translateY(2px);
         }
     </style>
 </head>
+
 <body>
     <table class="calculator">
         <tr>
-            <td colspan=4><div class="display" id="display">0</div></td>
+            <td colspan=4>
+                <div class="display" id="display">0</div>
+            </td>
         </tr>
         <tr>
             <td colspan=3><button class='clear' onclick="clearFunc();">Clear</button></td>
@@ -74,7 +87,7 @@
             <td><button class='num' onclick="includeNums('4');">4</button></td>
             <td><button class='num' onclick="includeNums('5');">5</button></td>
             <td><button class='num' onclick="includeNums('6');">6</button></td>
-            <td><button class='op sub'  onclick="alert('-');">-</button></td>
+            <td><button class='op sub' onclick="alert('-');">-</button></td>
         </tr>
         <tr>
             <td><button class='num' onclick="includeNums('1');">1</button></td>
@@ -83,19 +96,32 @@
             <td><button class='op add' onclick="alert('+');">+</button></td>
         </tr>
         <tr>
-            <td colspan=2><button class='num' onclick="includeNums('0');">0</button></td>    
-            <td><button class='point' onclick="alert('.'); includeNums('.')">.</button></td> 
-            <td><button class='eq' onclick="alert('=');">=</button></td> 
+            <td colspan=2><button class='num' onclick="includeNums('0');">0</button></td>
+            <td><button class='point' onclick="includeDeci('.')">.</button></td>
+            <td><button class='eq' onclick="alert('=');">=</button></td>
         </tr>
-      </table>
-      <script>
-          function clearFunc(){
-              dispDefault = "0"; 
-              document.getElementById("display").innerHTML = dispDefault;
-          }
-          function includeNums(x){
-              document.getElementById("display").innerHTML += x;
-          }
-      </script>
+    </table>
+    <script>
+        function clearFunc() {
+            document.getElementById("display").innerHTML = "0";    /* This function clears the display and sets it to default */
+        }
+        function includeNums(x) {
+            if (document.getElementById("display").innerHTML === "0") {     /* If the display is default */
+                document.getElementById("display").innerHTML = x;            /* Change it to x's value */
+            } else {
+                document.getElementById("display").innerHTML += x;           /* Otherwise, accumulate x's value onto display */
+            }
+        }
+        function includeDeci(x) {                                           /* x's value here is only decimal */
+            if (document.getElementById("display").innerHTML == "0") {       /* Check for default display */
+                document.getElementById("display").innerHTML += x;          /* If display is default, add decimal */
+            }
+            var displayStr = document.getElementById("display").innerHTML;            /* Turn the display into a string */
+            if (!displayStr.includes(".")) {                                         /* If the display doesn't include a decimal, add the decimal */
+                document.getElementById("display").innerHTML += x;
+            }
+        }
+    </script>
 </body>
+
 </html>
