@@ -75,53 +75,183 @@
         </tr>
         <tr>
             <td colspan=3><button class='clear' onclick="clearFunc();">Clear</button></td>
-            <td><button class='op div' onclick="alert('÷');">÷</button></td>
+            <td><button class='op div' onclick="operatorCall('/');">÷</button></td>
         </tr>
         <tr>
             <td><button class='num' onclick="includeNums('7');">7</button></td>
             <td><button class='num' onclick="includeNums('8');">8</button></td>
             <td><button class='num' onclick="includeNums('9');">9</button></td>
-            <td><button class='op mul' onclick="alert('x');">x</button></td>
+            <td><button class='op mul' onclick="operatorCall('*')">x</button></td>
         </tr>
         <tr>
             <td><button class='num' onclick="includeNums('4');">4</button></td>
             <td><button class='num' onclick="includeNums('5');">5</button></td>
             <td><button class='num' onclick="includeNums('6');">6</button></td>
-            <td><button class='op sub' onclick="alert('-');">-</button></td>
+            <td><button class='op sub' onclick="operatorCall('-');">-</button></td>
         </tr>
         <tr>
             <td><button class='num' onclick="includeNums('1');">1</button></td>
             <td><button class='num' onclick="includeNums('2');">2</button></td>
             <td><button class='num' onclick="includeNums('3');">3</button></td>
-            <td><button class='op add' onclick="alert('+');">+</button></td>
+            <td><button class='op add' onclick="operatorCall('+');">+</button></td>
         </tr>
         <tr>
             <td colspan=2><button class='num' onclick="includeNums('0');">0</button></td>
             <td><button class='point' onclick="includeDeci('.')">.</button></td>
-            <td><button class='eq' onclick="alert('=');">=</button></td>
+            <td><button class='eq' onclick="calculateAll();">=</button></td>
         </tr>
     </table>
     <script>
+
+        var num1 = "";                                                   /* Variable for storing display values */
+        var num2 = "";
+        var operator = "";                                               /* Variable for operator */
+        var numBool = false;                                            /* Boolean values for checking for last type of button pressed */
+        var deciBool = false;
+        var operBool = false;
+        var equalsBool = false;
+
         function clearFunc() {
-            document.getElementById("display").innerHTML = "0";    /* This function clears the display and sets it to default */
+            document.getElementById("display").innerHTML = "0";    /* This function clears the display and variables, sets them to default */
+            num1 = "";
+            num2 = "";
+            operator = "";
+            numBool = false;
+            deciBool = false;
+            operBool = false;
+            equalsBool = false;
         }
         function includeNums(x) {
-            if (document.getElementById("display").innerHTML === "0") {     /* If the display is default */
-                document.getElementById("display").innerHTML = x;            /* Change it to x's value */
-            } else {
-                document.getElementById("display").innerHTML += x;           /* Otherwise, accumulate x's value onto display */
+            if (equalsBool == true) {
+                document.getElementById("display").innerHTML = x;
             }
+            if (document.getElementById("display").innerHTML === "0" || numBool == false) {     /* If the display is default */
+                document.getElementById("display").innerHTML = x;            /* Change it to x's value */
+                numBool = true;
+                deciBool = false;
+                operBool = false;
+                equalsBool = false;
+            } else if (equalsBool == false) {
+                document.getElementById("display").innerHTML += x;           /* Otherwise, accumulate x's value onto display */
+                numBool = true;
+                deciBool = false;
+                operBool = false;
+                equalsBool = false;
+            }
+            if (document.getElementById("display").innerHTML == "0.") {
+                document.getElementById("display").innerHTML += x;
+                numBool = true;
+                deciBool = false;
+                operBool = false;
+                equalsBool = false;
+            }
+            if (num1 != "") {
+                num2 = parseFloat(document.getElementById("display").innerHTML);
+                numBool = true;
+                deciBool = false;
+                operBool = false;
+                equalsBool = false;
+            }
+
         }
         function includeDeci(x) {                                           /* x's value here is only decimal */
             if (document.getElementById("display").innerHTML == "0") {       /* Check for default display */
                 document.getElementById("display").innerHTML += x;          /* If display is default, add decimal */
+                numBool = true;
+                deciBool = true;
+                operBool = false;
+                equalsbool = false;
             }
             var displayStr = document.getElementById("display").innerHTML;            /* Turn the display into a string */
             if (!displayStr.includes(".")) {                                         /* If the display doesn't include a decimal, add the decimal */
                 document.getElementById("display").innerHTML += x;
+                numBool = true;
+                deciBool = true;
+                operBool = false;
+                equalsbool = false;
+            }
+        }
+
+
+        function operatorCall(x) {                                                                     /* Function called when clicking operators */
+            if (operator == "" && num1 == "") {                                                                        /* If operator is empty */
+                num1 = parseFloat(document.getElementById("display").innerHTML);                         /* Store display in num1 */
+                operator = x;                                                                           /* Store pressed operator */
+                numBool = false;
+                deciBool = false;
+                operBool = true;
+                equalsbool = false;
+                console.log(num1, num2, operator);
+
+            }
+            else if (num2 == "") {
+                num2 = parseFloat(document.getElementById("display").innerHTML);
+                numBool = false;
+                deciBool = false;
+                operBool = true;
+                equalsbool = false;
+                console.log(num1, num2, operator);
+            }
+            else if (num2 != "" && equalsBool == false) {
+                operator = x;
+                numBool = false;
+                deciBool = false;
+                operBool = true;
+                equalsbool = false;
+                switch (x) {
+                    case "+":
+                        num1 = num1 + num2;
+                        console.log(num1, num2, operator);
+                        break;
+                    case "-":
+                        num1 = num1 - num2;
+                        console.log(num1, num2, operator);
+                        break;
+                    case "/":
+                        num1 = num1 / num2;
+                        console.log(num1, num2, operator);
+                        break;
+                    case "*":
+                        num1 = num1 * num2;
+                        console.log(num1, num2, operator);
+                        break;
+                }
+            }
+
+        }
+        function calculateAll() {
+            if (num1 == "" && num2 == ""){
+                document.getElementById("display").innerHTML = "0";
+            }
+            
+            if (numBool == true) {
+                num2 = parseFloat(document.getElementById("display").innerHTML);
+                switch (operator) {
+                    case "+":
+                        num1 = num1 + num2;
+                        document.getElementById("display").innerHTML = num1;
+                        break;
+                    case "-":
+                        num1 = num1 - num2;
+                        document.getElementById("display").innerHTML = num1;
+                        break;
+                    case "/":
+                        num1 = num1 / num2;
+                        document.getElementById("display").innerHTML = num1;
+                        break;
+                    case "*":
+                        num1 = num1 * num2;
+                        document.getElementById("display").innerHTML = num1;
+                        break;
+                }
+                console.log(num1, num2, operator);
+                equalsBool = true;
+                num1 = parseFloat(document.getElementById("display").innerHTML);
+                num2 = "";
             }
         }
     </script>
+    <script src="lab4-tester.js"></script>
 </body>
 
 </html>
