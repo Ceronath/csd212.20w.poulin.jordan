@@ -128,12 +128,10 @@
     function tick() {
         // TODO: use a timer to update the game and re-call tick
         let n = msPerTick(snakeSpeed);
-        var timerSet = setInterval(function () {
+        setTimeout(function () {
             if (gameState == 'running') {
                 updateGame();
-            }
-            else if (gameState == 'over') {
-                clearInterval(timerSet);
+                tick();
             }
         }, n);
     }
