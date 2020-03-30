@@ -23,7 +23,7 @@ function processDeliveryInfo() {
 
     let prop;
     for (prop in delivInfo) {
-        delivSummary.innerHTML += `<p>${delivInfo[prop]}</p>`;
+        delivSummary.innerHTML += "<p>" + delivInfo[prop] + "</p>";
         console.log(prop);
         console.log(delivSummary);
     }
