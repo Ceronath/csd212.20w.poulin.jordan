@@ -11,7 +11,7 @@ let blockSize = DEFAULT_BLOCK_SIZE
  * @param speed The number of gameboard grid blocks per second
  */
 function msPerTick(speed) {
-    return 1000.0/speed;
+    return 1000.0 / speed;
 }
 
 /**
@@ -19,12 +19,120 @@ function msPerTick(speed) {
  * @param sizeInBlocks The size to convert in terms of number of gameboard grid squares (blocks)
  * @param includeUnits Whether or not to include the 'px' unit in the returned value
  */
-function px(sizeInBlocks, includeUnits=true) {
+function px(sizeInBlocks, includeUnits = true) {
     const px = sizeInBlocks * blockSize
-    if ( includeUnits ) { return px + 'px' }
+    if (includeUnits) { return px + 'px' }
     return px
 }
+class Snake {
+    constructor(color, position, direction) {
+        this.color = color
+        this.score = 0
+        this.speed = INITIAL_SNAKE_SPEED
+        this.head = new SnakeSegment(color, position, direction, true, true)
+        let snakeArr = [this.head]
+        this.segments = snakeArr
+    }
+    addTo(el) {
+        for (let x = 0; x < this.segments.length; x++) {
+            let y = this.segments[x]
+            y.addTo(el)
+        }
+    }
+    draw(el) {
+        for (let x = 0; x < this.segments.length; x++) {
+            let y = this.segments[x]
+            y.draw(el)
+        }
+    }
+    kill() {
+        for (let x = 0; x < this.segments.length; x++) {
+            let y = this.segments[x]
+            y.kill()
+        }
+    }
+    set direction(dir) {
+        this.head.direction = dir;
+    }
+    get direction() {
+        return this.head.direction
+    }
+    nextHeadPosition() {
+        return this.head.nextPosition()
+    }
+    isHeadOn(placeableObject) {
+        return this.head.isAtSamePositionAs(placeableObject)
+    }
+    slither() {
+        let nextDir = this.head.direction
+        for (let x = 0; x < this.segments.length; x++) {
+            this.segments[x].gridPosition = this.segments[x].nextPosition()
+            let dirForNextSegment = this.segments[x].direction
+            this.segments[x].direction = nextDir
+            nextDir = dirForNextSegment
 
+        }
+    }
+    grow() {
+        this.segments[this.segments.length - 1].untail()
+
+        let newTail = new SnakeSegment(this.color, this.segments[this.segments.length - 1].gridPosition, null, false, true)
+        this.segments.push(newTail)
+        return newTail
+    }
+    get length() {
+        return this.segments.length
+    }
+    laysOnPoint(p) {
+        for (let x = 0; x < this.segments.length; x++) {
+            if (this.segments[x].isAtPoint(p)) {
+                return true
+            }
+
+        }
+        return false
+    }
+    get caste() {
+        return "Sss'ish"
+    }
+    speedUp() {
+        this.speed = (this.speed * 1.05)
+    }
+    incrementScore() {
+        this.score += 10
+    }
+}
+class HssishSnake extends Snake {
+    get caste() {
+        return this._caste = "Hss'ish"
+    }
+    incrementScore() {
+        super.score += 12
+    }
+
+}
+class TssishSnake extends Snake {
+    get caste() {
+        return this._caste = "Tss'ish"
+    }
+    speedUp() {
+        super.speed = (this.speed * 1.01)
+    }
+}
+class KssishSnake extends Snake {
+    get caste() {
+        return this._caste =  "Kss'ish"
+    }
+    grow() {
+        let growChance = 1 + Math.floor(Math.random() * 10)
+        if (growChance > 5) {
+            return super.grow()
+        }
+        else if (growChance <= 5) {
+            return null
+        }
+    }
+}
 /**
  * Represents a point on the game board grid
  */
@@ -55,7 +163,7 @@ class Board {
 
         // A collection of PlaceableObjects on the board. This will contain things like
         // Food and SnakeSegments, all of which are PlaceableObjects
-        this.objects = []                               
+        this.objects = []
     }
 
     /**
@@ -68,7 +176,7 @@ class Board {
         const h = window.innerHeight
 
         // Size the board so there is a left/right margin by subtracting 2 grid block sizes from the window width
-        const wpx = w - px(2, false);  
+        const wpx = w - px(2, false);
         // Size the board so there is a bottom margin by subtracting 1 grid block size from the window height
         // Also make room for the header element by removing its height (this.el.offsetTop) from the window height
         const hpx = h - this.el.offsetTop - px(1, false);
@@ -93,6 +201,12 @@ class Board {
         // TODO: Use the built-in Math object, the Point class, 
         //       and the properties of this Board class to return 
         //       a Point that is at a random location in the board
+        let x = Math.floor(Math.random() * this.gridWidth);
+        let y = Math.floor(Math.random() * this.gridHeight);
+        let myPoint = new Point(x, y);
+        console.log(x);
+        console.log(y);
+        return myPoint;
     }
 
     /**
@@ -104,7 +218,12 @@ class Board {
         //       a Point that is in the middle of the board
         // NOTE: Be sure that the point is on INTEGER coordinates, 
         //       even if your board has odd-valued dimensions
+        let x = Math.floor(this.gridWidth / 2);
+        let y = Math.floor(this.gridHeight / 2);
+        let middlePoint = new Point(x, y);
+        return middlePoint;
     }
+
 
     /**
      * Returns true if the given Point lies the board
@@ -118,7 +237,7 @@ class Board {
      * Remove all DOM elements from the gameboard DOM element
      */
     clear() {
-        while ( this.el.lastChild ) {
+        while (this.el.lastChild) {
             this.el.removeChild(this.el.lastChild)
         }
     }
@@ -145,7 +264,7 @@ class Board {
      * Simply calls the draw() method of all PlaceableObjects on the board
      */
     draw() {
-        for ( let o of this.objects ) {
+        for (let o of this.objects) {
             o.draw()
         }
     }
@@ -209,7 +328,7 @@ class PlaceableObject {
 }
 
 class Food extends PlaceableObject {
-    constructor(gridPosition) {    
+    constructor(gridPosition) {
         super(gridPosition)
 
         this.el = document.createElement('div')
@@ -224,17 +343,14 @@ class Food extends PlaceableObject {
  * Represents an individual snake segment
  */
 class SnakeSegment extends PlaceableObject {
-    constructor(color, gridPosition, direction=null, isHead=false, isTail=false) {
+    constructor(color, gridPosition, direction = null, isHead = false, isTail = false) {
         super(gridPosition)
-
-        this.score = 0
-        this.speed = INITIAL_SNAKE_SPEED
 
         this.el = document.createElement('div')
         this.el.className = 'snake-segment'
 
-        if ( isTail ) { this.el.classList.add('snake-tail') }
-        if ( isHead ) { this.el.classList.add('snake-head') }
+        if (isTail) { this.el.classList.add('snake-tail') }
+        if (isHead) { this.el.classList.add('snake-head') }
 
         this.el.style.backgroundColor = color
         this.el.style.width = this.el.style.height = px(1)
@@ -248,8 +364,8 @@ class SnakeSegment extends PlaceableObject {
         // must also manipulate the segment el's classlist accordingly to one of 
         // 'snake-dir-U', 'snake-dir-D', 'snake-dir-L', or 'snake-dir-R'
         // AND remove the previous dir-related class
-        this.el.classList.remove('snake-dir-'+this._direction)
-        this.el.classList.add('snake-dir-'+d)
+        this.el.classList.remove('snake-dir-' + this._direction)
+        this.el.classList.add('snake-dir-' + d)
         this._direction = d
     }
 
@@ -265,15 +381,15 @@ class SnakeSegment extends PlaceableObject {
      * Returns the next position for this snake segment, given its current direction
      */
     nextPosition() {
-        switch( this.direction ) {
+        switch (this.direction) {
             case 'U':
-                return new Point(this.gridPosition.x, this.gridPosition.y-1)
+                return new Point(this.gridPosition.x, this.gridPosition.y - 1)
             case 'D':
-                return new Point(this.gridPosition.x, this.gridPosition.y+1)
+                return new Point(this.gridPosition.x, this.gridPosition.y + 1)
             case 'L':
-                return new Point(this.gridPosition.x-1, this.gridPosition.y)
+                return new Point(this.gridPosition.x - 1, this.gridPosition.y)
             case 'R':
-                return new Point(this.gridPosition.x+1, this.gridPosition.y)
+                return new Point(this.gridPosition.x + 1, this.gridPosition.y)
             default:
                 return this.gridPosition
         }
@@ -304,11 +420,11 @@ class SettingsPanel {
     hide() {
         document.getElementById('settings-panel').classList.remove('open');
     }
-    
+
     show() {
         document.getElementById('settings-panel').classList.add('open');
     }
-    
+
     handleFormSubmit(event) {
 
         this.hide()
@@ -361,7 +477,9 @@ class Game {
 
     updateGameInfo() {
         document.getElementById('score').innerText = this.snake.score;
-        document.getElementById('speed').innerText = Math.round(this.snake.speed*100)/100
+        document.getElementById('speed').innerText = Math.round(this.snake.speed * 100) / 100
+        document.getElementById('size').innerText = this.snake.length
+        document.getElementById('caste').innerText = this.snake.caste
     }
 
     // This is the handler that we passed in to the SettingsPanel.  It gets called when the Start button
@@ -379,26 +497,42 @@ class Game {
         this.board = new Board()
 
         // TODO: Pick a position in the middle of the game board
-        const position = new Point(0,0)
+        const position = this.board.midPoint();
 
         // TODO: Pick a random initial direction
-        const dir = 'R'
+        let randoDir = ['R', 'L', 'U', 'D'];
+        const dir = randoDir[Math.floor(Math.random() * randoDir.length)];
 
         const color = DEFAULT_SNAKE_COLOR
 
         // TODO: Make your own 'Snake' class that will allow the snake to grow
-        this.snake = new SnakeSegment(color, position, dir, true, true)
+        
+        if (this.settingsPanel.snakeCaste == "s") {
+            this.snake = new Snake(color, position, dir, true, true)
+            this.board.add(this.snake)
+        }
+        else if (this.settingsPanel.snakeCaste == "h") {
+            this.snake = new HssishSnake(color, position, dir, true, true)
+            this.board.add(this.snake)
+        }
+        else if (this.settingsPanel.snakeCaste == "t") {
+            this.snake = new TssishSnake(color, position, dir, true, true)
+            this.board.add(this.snake)
+        }
+        else if (this.settingsPanel.snakeCaste == "k") {
+            this.snake = new KssishSnake(color, position, dir, true, true)
+            this.board.add(this.snake)
+        }
 
-        this.board.add(this.snake)
 
         // Create a new food at a random location
         // TODO: place the food in random locations
-        const foodPosition = new Point(this.board.gridWidth-1, this.board.gridHeight-1)
+        const foodPosition = this.board.randomGridPosition();
         this.food = new Food(foodPosition)
         this.board.add(this.food)
 
         this.board.draw()
-        
+
         this.hideGameover()
 
         this.state = 'running'
@@ -419,14 +553,14 @@ class Game {
 
         // If manualTick is enabled, then there's nothing more to do.  User keypresses will be the only
         // thing that causes the game to 'tick' forward
-        if ( ! this.manualTick ) { 
+        if (!this.manualTick) {
             // Otherwise, we set a timer so that the next tick will occur according to the snake's speed
             // whether or not the user presses a key
-            this.timeoutId = setTimeout(() => { 
+            this.timeoutId = setTimeout(() => {
                 // Only call a new tick if the game is not over
-                if ( this.state === 'running' ) { 
+                if (this.state === 'running') {
                     this.tick()
-                } 
+                }
             }, msPerTick(this.snake.speed))
         }
     }
@@ -437,10 +571,17 @@ class Game {
     isGameOver() {
 
         // TODO: Refactor this to use the correct method on your new Snake class
-        const nextHeadPosition = this.snake.nextPosition()
-        
+        const nextHeadPosition = this.snake.nextHeadPosition();
+
+        if (!this.board.isPointInside(nextHeadPosition)) {
+            return true
+        }
+        if (this.snake.laysOnPoint(nextHeadPosition)) {
+            return true
+        } else return false
+
         // Game is over if either the next head position is outside the board...
-        return ! this.board.isPointInside(nextHeadPosition) 
+
         // TODO: check whether the snake collides with itself
     }
 
@@ -449,27 +590,35 @@ class Game {
      */
     update() {
 
-        if ( this.isGameOver() ) { 
+        if (this.isGameOver()) {
             this.showGameover()
             this.snake.kill()
             this.state = 'over'
         } else {
 
             // TODO: refactor this line to use the correct method on your new Snake class
-            this.snake.gridPosition = this.snake.nextPosition()
+            this.snake.slither()
 
             // TODO: refactor this line to use the correct method on your new Snake class
-            if ( this.snake.isAtSamePositionAs(this.food) ) {
+            if (this.snake.isHeadOn(this.food)) {
 
-                this.snake.score += 10
-                this.snake.speed *= 1.05
+                this.snake.incrementScore()
+                this.snake.speedUp()
+
+
+
+                let newTail = this.snake.grow()
+                if (newTail != null) {
+                    this.board.add(newTail)
+                }
 
                 // The current food has been eaten! Remove it and make a new one at a random location
                 this.food.remove()
-                const foodPosition = new Point(this.board.gridWidth-1, this.board.gridHeight-1)
+                const foodPosition = this.board.randomGridPosition();
                 this.food = new Food(foodPosition)
                 this.board.add(this.food)
-            } 
+
+            }
 
             this.board.draw()
 
@@ -481,8 +630,8 @@ class Game {
 
         const key = event.key
 
-        if ( this.state === 'running' ) {
-            if ( key === 'ArrowDown' || key === 'ArrowUp' || key === 'ArrowLeft' || key === 'ArrowRight' ) {
+        if (this.state === 'running') {
+            if (key === 'ArrowDown' || key === 'ArrowUp' || key === 'ArrowLeft' || key === 'ArrowRight') {
 
                 switch (key) {
                     case 'ArrowDown':
@@ -508,7 +657,7 @@ class Game {
 }
 
 // This is where it all begins!
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
 
     // Make a new game, and set it to manual tick if the URL has the query string '?manual'
     new Game(location.search == "?manual")
