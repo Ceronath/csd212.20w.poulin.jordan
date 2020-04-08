@@ -91,8 +91,6 @@
         let el2x = el2.style.top;
         let el1y = el1.style.left;
         let el2y = el2.style.left;
-        console.log(el1x);
-        console.log(el2x);
         if (el1x == el2x && el1y == el2y){
             return true;
         }
@@ -207,7 +205,7 @@
         // TODO: add a new food element
         foodEl = createFoodElement();
         boardEl.appendChild(foodEl);
-        positionElementOnGrid(foodEl, 35, 14);
+        positionElementOnGrid(foodEl, boardW-1, boardH-1);
     }
 
     function updateScoreElement() {
