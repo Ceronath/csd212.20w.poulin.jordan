@@ -428,11 +428,10 @@ class SettingsPanel {
         this.submitCallback = onSubmit
 
         // TODO: give the snake-color input a default value
-        var x = document.getElementById("snake-color");
-        x.defaultValue = DEFAULT_SNAKE_COLOR;
+        document.getElementById("snake-color").value = DEFAULT_SNAKE_COLOR;
         // TODO: give the block-size input a default value
-        var y = document.getElementById("block-size");
-        y.defaultValue = DEFAULT_BLOCK_SIZE;
+        document.getElementById("block-size").value = DEFAULT_BLOCK_SIZE;
+
         // NOTE the uses below of the bind() function to ensure that 'this' refers to the SettingsPanel
         // object and NOT the object that CALLED the handler function (which is the default in JavaScript)
 
@@ -569,10 +568,10 @@ class SettingsPanel {
         let valName = document.getElementById('snake-name').value;
         let checkCaste = document.getElementById('snake-caste').value;
         let nameField = document.querySelector('input');
-        let ssCheck = /S(S|s){2,}( (S(S|s){2,}|-+<))*/g;
-        let tsCheck = /T(S|s){2,}( (T(S|s){2,}|-+<))*/g;
-        let hsCheck = /H(S|s){2,}( (H(S|s){2,}|-+<))*/g;
-        let ksCheck = /K(S|s){2,}( (K(S|s){2,}|-+<))*/g;
+        let ssCheck = /^S(S|s){2,}( (S(S|s){2,}|-+<))*$/g;
+        let tsCheck = /^T(S|s){2,}( (T(S|s){2,}|-+<))*$/g;
+        let hsCheck = /^H(S|s){2,}( (H(S|s){2,}|-+<))*$/g;
+        let ksCheck = /^K(S|s){2,}( (K(S|s){2,}|-+<))*$/g;
         nameField.setCustomValidity("");
         switch(checkCaste){
             case 's':
