@@ -509,20 +509,17 @@ class Game {
         
         if (this.settingsPanel.snakeCaste == "s") {
             this.snake = new Snake(color, position, dir, true, true)
-            this.board.add(this.snake)
         }
         else if (this.settingsPanel.snakeCaste == "h") {
             this.snake = new HssishSnake(color, position, dir, true, true)
-            this.board.add(this.snake)
         }
         else if (this.settingsPanel.snakeCaste == "t") {
             this.snake = new TssishSnake(color, position, dir, true, true)
-            this.board.add(this.snake)
         }
         else if (this.settingsPanel.snakeCaste == "k") {
             this.snake = new KssishSnake(color, position, dir, true, true)
-            this.board.add(this.snake)
         }
+        this.board.add(this.snake)
 
 
         // Create a new food at a random location
